@@ -1,0 +1,83 @@
+name: Performance Regression
+description: Report a performance regression between Velocity OS versions
+title: "[REGRESSION] "
+labels: ["performance", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Performance regressions must include benchmark evidence. If you cannot provide benchmarks, describe the observed impact and steps to reproduce.
+
+  - type: input
+    id: previous_version
+    attributes:
+      label: Previous Version
+      description: Version or build date that did not exhibit the regression
+      placeholder: "2026.06.15"
+    validations:
+      required: true
+
+  - type: input
+    id: current_version
+    attributes:
+      label: Current Version
+      description: Version or build date exhibiting the regression
+      placeholder: "2026.07.01"
+    validations:
+      required: true
+
+  - type: textarea
+    id: benchmarks
+    attributes:
+      label: Benchmark Results
+      description: |
+        Paste benchmark output. Include both previous and current results side-by-side if possible.
+        Use tools like `bench`, `fio`, `phoronix-test-suite`, or in-game benchmarks.
+      render: shell
+    validations:
+      required: true
+
+  - type: input
+    id: fps
+    attributes:
+      label: Average FPS
+      description: Average frames per second in affected workload
+      placeholder: "e.g. 142"
+    validations:
+      required: false
+
+  - type: input
+    id: frametime
+    attributes:
+      label: Frametime
+      description: Average and 99th-percentile frametime (ms)
+      placeholder: "e.g. 7.0ms avg, 12.4ms 99th"
+    validations:
+      required: false
+
+  - type: input
+    id: game
+    attributes:
+      label: Game or Workload Tested
+      description: Which game, benchmark, or workload exhibited the regression?
+      placeholder: "Counter-Strike 2, Blender BMW, fio randread"
+    validations:
+      required: true
+
+  - type: input
+    id: hardware
+    attributes:
+      label: Hardware
+      description: GPU, CPU, and relevant hardware
+      placeholder: "NVIDIA RTX 4080, AMD Ryzen 7 7800X3D"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction Steps
+      description: Steps to reproduce the regression
+    validations:
+      required: true

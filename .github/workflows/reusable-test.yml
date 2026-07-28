@@ -1,0 +1,58 @@
+name: Reusable Test
+description: Run unit, integration, and system tests with report upload
+inputs:
+  test-command:
+    description: "Test command to execute"
+    required: true
+    type: string
+  report-paths:
+    description: "Glob patterns for test reports"
+    required: false
+    type: string
+    default: "coverage/ junit.xml test-results.xml .test-results/"
+  coverage-tool:
+    description: "Coverage tool in use (cargo, go, pytest, none)"
+    required: false
+    type: string
+    default: "none"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Run tests
+      shell: bash
+      run: ${{ inputs.test-command }}
+
+    - name: Upload test reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-reports
+        path: ${{ inputs.report-paths }}
+        retention-days: 14
+        compression-level: 6
+        if-no-files-found: warn
+
+    - name: Upload coverage reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-reports
+        path: |
+          coverage/
+          htmlcov/
+          cobertura.xml
+          lcov.info
+        retention-days: 14
+        compression-level: 6
+        if-no-files-found: warn
+
+    - name: Fail on test failures
+      if: failure()
+      shell: bash
+      run: |
+        echo "Tests failed. Review uploaded artifacts for details."
+        exit 1

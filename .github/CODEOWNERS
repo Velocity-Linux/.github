@@ -1,0 +1,33 @@
+# Velocity OS CODEOWNERS
+# This file defines code owners for automated review requests.
+# Patterns are evaluated in order. The first matching pattern wins.
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global defaults
+* @Velocity-Linux/core
+
+# Documentation
+/docs/ @Velocity-Linux/docs
+/docs/**/*.md @Velocity-Linux/docs
+
+# Engine and scheduler
+/engine/ @Velocity-Linux/engine
+/kernel/ @Velocity-Linux/kernel
+/scheduler/ @Velocity-Linux/engine
+
+# Desktop environment and compositor
+/desktop/ @Velocity-Linux/desktop
+/compositor/ @Velocity-Linux/desktop
+/shell/ @Velocity-Linux/desktop
+
+# Packages
+/packages/ @Velocity-Linux/packages
+/repo/ @Velocity-Linux/packages
+
+# Installer
+/installer/ @Velocity-Linux/installer
+
+# Infrastructure and CI
+/.github/ @Velocity-Linux/infrastructure
+/scripts/ @Velocity-Linux/infrastructure
+/docker/ @Velocity-Linux/infrastructure

@@ -1,0 +1,14 @@
+name: Security
+description: Report a security vulnerability in Velocity OS
+title: "[SECURITY] "
+labels: ["security", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not report security vulnerabilities through public GitHub issues.**
+
+        Please report security vulnerabilities privately using the process described in our [Security Policy](https://github.com/Velocity-Linux/.github/blob/main/SECURITY.md) or by emailing velocityos@tutamail.com with the subject "Velocity OS Security Report".
+
+        This form is intentionally disabled. Use private disclosure channels only.

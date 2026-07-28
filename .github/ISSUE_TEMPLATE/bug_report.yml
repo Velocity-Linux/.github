@@ -1,0 +1,83 @@
+name: Bug Report
+description: Report a reproducible bug in Velocity OS
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug. Please complete the form below with as much detail as possible.
+
+  - type: input
+    id: version
+    attributes:
+      label: Velocity OS Version
+      description: The version or build date of the affected system
+      placeholder: "2026.07.01"
+    validations:
+      required: true
+
+  - type: input
+    id: edition
+    attributes:
+      label: Desktop Edition
+      description: Which desktop edition are you using?
+      placeholder: "Velocity Gaming / Velocity Minimal / Velocity KDE"
+    validations:
+      required: true
+
+  - type: input
+    id: kernel
+    attributes:
+      label: Kernel Version
+      description: Output of `uname -r`
+      placeholder: "6.12.5-velocity1"
+    validations:
+      required: true
+
+  - type: input
+    id: hardware
+    attributes:
+      label: Hardware
+      description: |
+        GPU, CPU, and relevant hardware. You can run `lspci | grep -E "VGA|3D"` and `lscpu | grep "Model name"`.
+      placeholder: "NVIDIA RTX 4080, AMD Ryzen 7 7800X3D"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Clear, numbered steps to reproduce the behavior
+      placeholder: |
+        1. Boot into Velocity OS 2026.07.01
+        2. Run `game-launcher --game=cs2`
+        3. Observe frametime spike after 5 minutes
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Paste relevant logs. Use code blocks for terminal output. For kernel logs, run `journalctl -b -p warning`.
+      render: shell

@@ -1,0 +1,66 @@
+name: Reusable Rust
+description: Run Rust formatting, clippy, and test suite
+inputs:
+  working-directory:
+    description: "Directory containing Cargo.toml"
+    required: false
+    type: string
+    default: "."
+  toolchain:
+    description: "Rust toolchain channel"
+    required: false
+    type: string
+    default: "stable"
+  deny-warnings:
+    description: "Treat warnings as errors"
+    required: false
+    type: boolean
+    default: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: ${{ inputs.toolchain }}
+        components: rustfmt, clippy
+
+    - name: Cache Rust dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/bin
+          ~/.cargo/registry
+          ~/.cargo/git
+          target/
+        key: ${{ runner.os }}-rust-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-rust-
+
+    - name: Check formatting
+      shell: bash
+      run: cargo fmt -- --check
+
+    - name: Run clippy
+      shell: bash
+      run: |
+        cargo clippy --all-targets --all-features ${{ inputs.deny-warnings && '-- -D warnings' || '' }} -- --cap-lints warn
+
+    - name: Run tests
+      shell: bash
+      run: cargo test --all-targets --all-features
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: rust-test-results
+        path: |
+          target/debug/deps/*.d
+          target/.rustc_info.json
+        retention-days: 7
+        if-no-files-found: ignore

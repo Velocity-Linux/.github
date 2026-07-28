@@ -1,0 +1,35 @@
+name: Documentation
+description: Report an issue with Velocity OS documentation
+title: "[DOCS] "
+labels: ["documentation", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to report missing, incorrect, or unclear documentation.
+
+  - type: input
+    id: page
+    attributes:
+      label: Page or Section Affected
+      description: Which page, guide, or section is affected?
+      placeholder: "https://docs.velocityos.org/desktop/gaming-mode"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is wrong or missing?
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Improvement
+      description: How should it be fixed or improved?
+    validations:
+      required: true

@@ -1,0 +1,57 @@
+name: Reusable Documentation
+description: Build documentation and validate links
+inputs:
+  docs-directory:
+    description: "Directory containing documentation source"
+    required: false
+    type: string
+    default: "docs/"
+  build-command:
+    description: "Documentation build command"
+    required: false
+    type: string
+    default: "make -C docs html"
+  link-check-command:
+    description: "Link validation command"
+    required: false
+    type: string
+    default: "lychee docs/"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version-file: "docs/requirements.txt"
+        cache: "pip"
+
+    - name: Install documentation dependencies
+      shell: bash
+      run: |
+        if [ -f docs/requirements.txt ]; then
+          pip install -r docs/requirements.txt
+        fi
+        pip install lychee-link-checker
+
+    - name: Build documentation
+      shell: bash
+      run: ${{ inputs.build-command }}
+
+    - name: Validate links
+      shell: bash
+      run: ${{ inputs.link-check-command }} --no-progress
+
+    - name: Upload documentation artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: documentation-${{ github.sha }}
+        path: |
+          docs/_build/
+          docs/public/
+        retention-days: 14
+        compression-level: 6
+        if-no-files-found: warn

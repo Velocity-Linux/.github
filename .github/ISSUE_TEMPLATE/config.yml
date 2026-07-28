@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discussions
+    url: https://github.com/orgs/Velocity-Linux/discussions
+    about: Ask questions, share ideas, and discuss Velocity OS with the community
+  - name: Documentation
+    url: https://docs.velocityos.org
+    about: Read the official Velocity OS documentation
+  - name: Security Policy
+    url: https://github.com/Velocity-Linux/.github/blob/main/SECURITY.md
+    about: Review the security policy and learn how to report vulnerabilities privately

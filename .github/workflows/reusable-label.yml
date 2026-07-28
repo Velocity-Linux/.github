@@ -1,0 +1,24 @@
+name: Reusable Label
+description: Auto-label issues and pull requests based on content, paths, and title
+inputs:
+  config-path:
+    description: "Path to label configuration file"
+    required: false
+    type: string
+    default: ".github/label-config.yml"
+  repo-token:
+    description: "GitHub token with repo scope"
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Auto-label issues and PRs
+      uses: actions/labeler@v5
+      with:
+        repo-token: ${{ inputs.repo-token }}
+        configuration-path: ${{ inputs.config-path }}

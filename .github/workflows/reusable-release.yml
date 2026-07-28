@@ -1,0 +1,66 @@
+name: Reusable Release
+description: Draft a release, sign artifacts, and upload to GitHub Releases
+inputs:
+  artifact-paths:
+    description: "Glob patterns for release artifacts"
+    required: true
+    type: string
+  release-name:
+    description: "Release name"
+    required: false
+    type: string
+    default: "Release ${{ github.ref_name }}"
+  release-notes:
+    description: "Path to release notes file"
+    required: false
+    type: string
+    default: ""
+  draft:
+    description: "Create as draft release"
+    required: false
+    type: boolean
+    default: true
+  sign-artifacts:
+    description: "Whether to sign artifacts with GPG"
+    required: false
+    type: boolean
+    default: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./release-artifacts
+
+    - name: Sign artifacts with GPG
+      if: inputs.sign-artifacts
+      shell: bash
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      run: |
+        echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+        for f in ./release-artifacts/**/*; do
+          if [ -f "$f" ]; then
+            gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --armor --detach-sign "$f"
+          fi
+        done
+
+    - name: Create or update draft release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }}
+        name: ${{ inputs.release-name }}
+        body_path: ${{ inputs.release-notes }}
+        draft: ${{ inputs.draft }}
+        files: |
+          ./release-artifacts/**/*
+        fail_on_unmatched_files: true
+        generate_release_notes: ${{ inputs.release-notes == '' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

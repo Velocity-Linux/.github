@@ -1,0 +1,67 @@
+name: Reusable Package
+description: Validate PKGBUILD, lint packages, and upload artifacts
+inputs:
+  pkgbuild-path:
+    description: "Path to PKGBUILD or package directory"
+    required: true
+    type: string
+  package-type:
+    description: "Package format: pacman, deb, rpm, flatpak"
+    required: false
+    type: string
+    default: "pacman"
+  lint-tool:
+    description: "Linting tool command"
+    required: false
+    type: string
+    default: "namcap"
+  artifact-prefix:
+    description: "Prefix for uploaded artifact names"
+    required: false
+    type: string
+    default: "package"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install packaging tools
+      shell: bash
+      run: |
+        if command -v apt-get >/dev/null 2>&1; then
+          sudo apt-get update && sudo apt-get install -y devscripts lintian
+        elif command -v pacman >/dev/null 2>&1; then
+          sudo pacman -S --needed --noconfirm namcap base-devel
+        elif command -v dnf >/dev/null 2>&1; then
+          sudo dnf install -y rpmlint
+        fi
+
+    - name: Validate package build files
+      shell: bash
+      run: |
+        if [ "${{ inputs.package-type }}" = "pacman" ]; then
+          namcap ${{ inputs.pkgbuild-path }}
+        elif [ "${{ inputs.package-type }}" = "deb" ]; then
+          lintian ${{ inputs.pkgbuild-path }}
+        elif [ "${{ inputs.package-type }}" = "rpm" ]; then
+          rpmlint ${{ inputs.pkgbuild-path }}
+        fi
+
+    - name: Run package lint
+      shell: bash
+      run: ${{ inputs.lint-tool }} ${{ inputs.pkgbuild-path }}
+
+    - name: Upload package artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-prefix }}-${{ github.sha }}
+        path: |
+          ${{ inputs.pkgbuild-path }}/*.pkg.tar.zst
+          ${{ inputs.pkgbuild-path }}/*.deb
+          ${{ inputs.pkgbuild-path }}/*.rpm
+          ${{ inputs.pkgbuild-path }}/*.flatpak
+        retention-days: 30
+        compression-level: 9
+        if-no-files-found: warn
